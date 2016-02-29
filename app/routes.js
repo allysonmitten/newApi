@@ -3,6 +3,7 @@
 // load the user and token models
 var Token = require('./models/token');
 var User = require('./models/user');
+var Post = require('./models/posts');
 
 // expose the routes to our app with module.exports
 module.exports = function(app, passport) {
@@ -93,6 +94,32 @@ module.exports = function(app, passport) {
       })(req, res);
   });
 
+  app.post('/api/post', isLoggedIn, function(req, res) {
+
+  var newPost = new Post();
+  // newPost._creator = req.session.user._id;
+  newPost.title = req.param('title');
+  newPost.hashtag = req.param('hashtag');
+  newPost.address = req.param('address');
+  newPost.user_id = req.param('user_id');
+
+  newPost.save (function(err) {
+    if (err)
+    throw err;
+
+  var returnJson = {};
+  returnJson.status = "success";
+  return res.json(returnJson);
+                        
+ });
+
+                });
+
+        app.get('/api/post', function(req, res) {
+            Post.find({}, function(err, posts){
+                return res.json(posts);
+            })
+        })
   // checks and authenticates a userid/token combination
   app.post('/api/checklogin', function(req, res) {
 
